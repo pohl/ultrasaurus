@@ -22,7 +22,9 @@ The interface is a straight-forward application of [Bootstrap](http://getbootstr
 
 ## Running Locally
 
-If you have JDK 8, Apache Maven, you can build a WAR with a simple `mvn install`.  Once completed, you can rename the resulting `target/words-0.0.1-SNAPSHOT.war` to `ROOT.war` and drop it in the deployment directory of a Servlet 3.0 capabale container like Apache Tomcat 7.x or later.
+If you have JDK 8, Apache Maven, you can build a WAR with a simple `mvn install`.  Once completed, you can rename the resulting `ultrasaurus-0.0.1-SNAPSHOT.war` to `ROOT.war` and drop it in the deployment directory of a Servlet 3.0 capabale container like Apache Tomcat 7.x or later.
 
 Once done, you should be able to hit `http://localhost:8080/`
+
+I regret not having time to make this easier via Vagrant or Docker.
  
