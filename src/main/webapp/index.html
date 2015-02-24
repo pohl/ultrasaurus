@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Dictionary">
+    <meta name="author" content="Pohl Longsine">
+    <link rel="icon" href="favicon.ico">
+    <title>Ultrasaurus</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header"></div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Ultrasaurus</h1>
+        <!-- <p class="lead">Enter a word into the field below.<br> We'll try to tell you about it.</p> -->
+        <div class="row">
+            <div class="col-md-4">&nbsp;</div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input id="searchField" type="text" class="form-control" placeholder="Enter a word..." pattern="\s*[\d]{5}(?:[- ]?[\d]{4})?\s*">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+      </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+    </div>    
+
+</div><!-- /.container -->
+<div id="loadingDiv" class="container">
+    <h4>Loading...<span class="label label-primary">/'loʊdɪŋ/</span></h4>
+</div>    
+<div class="container">
+    <div id="output"></div>
+    <!-- <pre id="rawOutput"></pre> -->
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">Powered by <a href="http://wordsapi.com/">wordsapi.com</a>.</p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="js/underscore-min.js"></script>
+<script type="text/javascript" src="js/jquery-min.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+<script type="text/javascript" src="js/backbone-min.js"></script>
+<script type="text/javascript" src="js/handlebars.js"></script>
+
+<script id="template" type="text/x-handlebars-template">
+    {{#if wasFound}}
+    {{#if wordSearchResult}}
+    <h4>{{wordSearchResult.spelling}}{{#if wordSearchResult.pronunciation}}   <span class="label label-primary">/{{wordSearchResult.pronunciation}}/</span>{{/if}}</h4>
+    {{#each wordSearchResult.wordResults}}
+    <div class="well well-sm">
+        <p><span class="label label-default">{{partOfSpeech}}</span> {{definition}}</p>
+        {{#if synonyms.length}}
+        <h4>synonyms</h4>
+        <ul>
+        {{#each synonyms}}
+        <li>{{#if linkable}}<a href="#/words/{{entry}}">{{entry}}</a>{{else}}{{entry}}{{/if}}</li>
+        {{/each}}
+        </ul>
+        {{/if}}
+        {{#if antonyms.length}}
+        <h4>antonyms</h4>
+        <ul>
+        {{#each antonyms}}
+        <li>{{#if linkable}}<a href="#/words/{{entry}}">{{entry}}</a>{{else}}{{entry}}{{/if}}</li>
+        {{/each}}
+        </ul>
+        {{/if}}
+        {{#if hypernyms.length}}
+        <h4>hypernyms</h4>
+        <ul>
+        {{#each hypernyms}}
+        <li>{{#if linkable}}<a href="#/words/{{entry}}">{{entry}}</a>{{else}}{{entry}}{{/if}}</li>
+        {{/each}}
+        </ul>
+        {{/if}}
+        {{#if hyponyms.length}}
+        <h4>hyponyms</h4>
+        <ul>
+        {{#each hyponyms}}
+        <li>{{#if linkable}}<a href="#/words/{{entry}}">{{entry}}</a>{{else}}{{entry}}{{/if}}</li>
+        {{/each}}
+        </ul>
+        {{/if}}
+        {{#if holonyms.length}}
+        <h4>holonyms</h4>
+        <ul>
+        {{#each holonyms}}
+        <li>{{#if linkable}}<a href="#/words/{{entry}}">{{entry}}</a>{{else}}{{entry}}{{/if}}</li>
+        {{/each}}
+        </ul>
+        {{/if}}
+    </div>
+    {{/each}}
+    {{/if}}
+    {{else}}
+    <h4>{{wordSearchResult.spelling}} not found.</h4>
+    {{/if}}
+</script>
+
+<script>
+    var source   = $("#template").html();
+    var template = Handlebars.compile(source);
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            "words/:word": "getWord",
+            "*actions": "defaultRoute" // Backbone will try to match the route above first
+        }
+    });
+    // Instantiate the router
+    var app_router = new AppRouter;
+    app_router.on('route:getWord', function (word) {
+        // Note the variable in the route definition being passed in here
+        getWord(word);
+    });
+    app_router.on('route:defaultRoute', function (actions) {
+        if (actions != null) {
+            window.location = '/'
+        }
+    });
+
+    $("#searchField").on("keydown", function (e) {
+        if (e.which == 13) {
+            performSearch();
+            return true;
+        } else {
+            return e.which !== 32; // disallow spaces in the search field
+        }
+    });
+
+    function performSearch() {
+        var word = $("#searchField").val();
+        app_router.navigate('words/' + word.toLowerCase(), {trigger: true});
+    }
+    
+    var timesClicked = 0;
+    $( "#search" ).bind( "click", function( event ) {
+        performSearch();
+    });
+    
+    function getWord(word) {
+        $(document).ready(function(){
+            $('#searchField').val('');
+        });
+        var node = document.getElementById('output');
+        node.innerHTML = "";
+        $.ajax({
+            type: "GET",
+            url: "api/words/" + word,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data, status, jqXHR) {
+                var html = template(data);
+                var div = document.getElementById('output');   
+                div.innerHTML = html;
+            },
+            error: function (jqXHR, status) {
+                // error handler
+            }
+        });
+    }
+    
+    Backbone.history.start();
+
+    var loading = $('#loadingDiv').hide();
+    $(document)
+            .ajaxStart(function () {
+                loading.show();
+            })
+            .ajaxStop(function () {
+                loading.hide();
+            });
+
+</script>
+</body>
+</html>
+
