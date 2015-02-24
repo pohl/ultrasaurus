@@ -1,7 +1,5 @@
 # Ultrasaurus
 
-
-
 ## Introduction
 
 Ultrasaurus is an online thesaurus, with the additional capability of giving [hypernyms](http://en.wikipedia.org/wiki/Hyponymy_and_hypernymy), [hyponyms](http://en.wikipedia.org/wiki/Hyponymy_and_hypernymy), and [holonyms](http://en.wikipedia.org/wiki/Holonymy) in addition to the usual synonyms and antonyms.
@@ -24,12 +22,7 @@ The interface is a straight-forward application of [Bootstrap](http://getbootstr
 
 ## Running Locally
 
-### The Old Way
-
 If you have JDK 8, Apache Maven, you can build a WAR with a simple `mvn install`.  Once completed, you can rename the resulting `target/words-0.0.1-SNAPSHOT.war` to `ROOT.war` and drop it in the deployment directory of a Servlet 3.0 capabale container like Apache Tomcat 7.x or later.
 
 Once done, you should be able to hit `http://localhost:8080/`
  
-### The Vagrant Way
-
-To get going quickly, clone [this repository](https://github.com/seshendra/vagrant-ubuntu-tomcat7) and type `vagrant up`.
