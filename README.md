@@ -10,7 +10,7 @@ It resulted from a challenge I was given, to:
 * Called at least one external service, 
 * Displayed the retrieved information to the user, and
 * Provided at least one user interaction with the fetched data,
-* ...with 6 days to complete the project.
+* ...with 7 days to complete the project.
 
 You can try it out online at [labs.screaming.org](http://labs.screaming.org), at least for the time being.
 
