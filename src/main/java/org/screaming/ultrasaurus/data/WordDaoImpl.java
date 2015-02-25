@@ -62,9 +62,13 @@ public class WordDaoImpl implements WordDao {
         if (pronunciation.isPresent())  {
             wsrb.withPronunciation(pronunciation.get().getString("all"));
         }
-        JSONArray results = word.getJSONArray("results");
-        buildResults(wsrb, results);
-        return Optional.of(wsrb.build());
+        Optional<JSONArray> results = getJSONArray(word,"results");
+        if (results.isPresent()) {
+            buildResults(wsrb, results.get());
+            return Optional.of(wsrb.build());
+        } else {
+            return Optional.empty();
+        }
     }
 
     private void buildResults(WordSearchResult.Builder wsrb, JSONArray results) {
@@ -150,6 +154,16 @@ public class WordDaoImpl implements WordDao {
             Object o = object.get(field);
             if (o != null && o instanceof JSONObject) {
                 return Optional.of((JSONObject)o);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static final Optional<JSONArray> getJSONArray(JSONObject object, String field) {
+        if (object.has(field)) {
+            Object o = object.get(field);
+            if (o != null && o instanceof JSONArray) {
+                return Optional.of((JSONArray)o);
             }
         }
         return Optional.empty();
