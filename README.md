@@ -7,9 +7,9 @@ Ultrasaurus is an online thesaurus, with the additional capability of giving [hy
 It resulted from a challenge I was given, to:
 
 * Write a single-page web app, that
-* Called at least one external service, 
-* Displayed the retrieved information to the user, and
-* Provided at least one user interaction with the fetched data,
+* Calls at least one external service, 
+* Displays the retrieved information to the user, and
+* Provides at least one user interaction with the fetched data,
 * ...with 7 days to complete the project.
 
 You can try it out online at [labs.screaming.org](http://labs.screaming.org), at least for the time being.
@@ -24,7 +24,7 @@ The interface is a straight-forward application of [Bootstrap](http://getbootstr
 
 If you have JDK 8 and Apache Maven already installed, you can build a WAR with a simple `mvn install`.  Once completed, you can rename the resulting `target/ultrasaurus-0.0.1-SNAPSHOT.war` to `ROOT.war` and drop it in the deployment directory of a Servlet 3.0 capable container like Apache Tomcat 7.x or later.
 
-Once done, you should be able to hit `http://localhost:8080/`
+Once deployed, you should be able to hit `http://localhost:8080/`
 
 I regret not having time to make this easier via Vagrant or Docker.
  
